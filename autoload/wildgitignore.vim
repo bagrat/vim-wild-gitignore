@@ -1,12 +1,17 @@
+let s:original_wildignore = &wildignore
 
 function! wildgitignore#load()
     let cwd = getcwd()
     let gitignore_path = cwd . '/.gitignore'
 
-    call s:BuildWildignore(gitignore_path)
+    call s:WildignoreFromGitignore(gitignore_path)
 endfunction
 
-function! s:BuildWildignore(gitignore_path)
+function! s:WildignoreFromGitignore(gitignore_path)
+    if !filereadable(a:gitignore_path)
+        return
+    endif
+
     let ignore = '.git,'
 
     for gline in readfile(a:gitignore_path)
@@ -28,5 +33,10 @@ function! s:BuildWildignore(gitignore_path)
     endfor
 
     let ignore = substitute(ignore, ',$', '', 'g')
-    exec "set wildignore+=" . ignore
+    exec "set wildignore=" . s:original_wildignore . ',' . ignore
 endfunction
+
+augroup wildgitignorefromgitignore_fugitive
+    autocmd!
+    autocmd User Fugitive if exists('b:git_dir') | call <SID>WildignoreFromGitignore(fnamemodify(b:git_dir, ':h') . '/.gitignore') | endif
+augroup END

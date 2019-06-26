@@ -1,2 +1,5 @@
 # vim-wild-gitignore
-A vim plugin that loads your gitignore pattern into wildignore
+
+Based on: [vim-scripts/gitignore](https://github.com/vim-scripts/gitignore/blob/master/plugin/gitignore.vim)
+
+This plugin loads the patterns from your `.gitignore` to `wildignore`.
